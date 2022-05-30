@@ -44,6 +44,7 @@ def init_setting(dummy):
 @persistent
 def load_handler(dummy):
     tracker.turn_off()
+    post_open.post_double_click()
     try:
         init_setting(None)
         cameras.makeSureCameraExists()
@@ -63,6 +64,7 @@ def load_handler(dummy):
         post_open.update_scene()
         post_open.update_layers()
         post_open.hide_adjust_last_operation_panel()
+
     finally:
         tracker.turn_on()
 
@@ -84,8 +86,12 @@ def save_pre_handler(dummy):
 def save_post_handler(dummy):
     materials_handler.toggleToonEdge(None, None)
     materials_handler.toggleToonFace(None, None)
+
+    print("save_post_handler")
+    print(bpy.context.scene.ACON_prop.last_scene)
     for scene in bpy.data.scenes:
-        scene.view_settings.view_transform = "Standard"
+        print("here")
+        # scene.view_settings.view_transform = "Standard"
 
 
 def register():
