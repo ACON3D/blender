@@ -392,7 +392,9 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         update=scenes.change_bloom,
     )
 
-    last_scene: bpy.props.StringProperty(name="Last Scene")
+    last_scene: bpy.props.StringProperty(
+        default="2",
+    )
 
 
 class AconMaterialProperty(bpy.types.PropertyGroup):

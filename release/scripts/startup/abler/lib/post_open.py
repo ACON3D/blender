@@ -34,6 +34,11 @@ def update_scene() -> None:
     # 파일 맨 처음 열었을때 scene패널명을 현재 씬과 맞춰주기 위한 함수
     bpy.data.window_managers["WinMan"].ACON_prop.scene = bpy.context.scene.name
 
+    print("update_scene()")
+    print(f"scene.name : {bpy.context.scene.name}")
+
+    # prop = bpy.data.scenes.get("scene_name").ACON_prop
+    # print(f"prop.last_scene : {prop.last_scene}")
 
 def update_layers():
     # 파일 오픈시 Layer패널 업데이트
@@ -52,18 +57,3 @@ def hide_adjust_last_operation_panel():
             for space in area.spaces:
                 if space.type == "VIEW_3D":
                     space.show_region_hud = False
-
-
-def post_double_click():
-    print("post_double_click()")
-
-    context = bpy.context
-    print(f"scene.name : {context.scene.name}")
-    print(f"현재 파일 : {context.blend_data.filepath}")
-
-    if context.blend_data.filepath == "":
-        context.scene.ACON_prop.last_scene = "blank"
-
-    if context.scene.ACON_prop.last_scene == "blank":
-        context.scene.ACON_prop.last_scene = "2"
-    print(f"last_name : {context.scene.ACON_prop.last_scene}")

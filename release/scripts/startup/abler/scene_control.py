@@ -35,18 +35,23 @@ import bpy
 from .lib import scenes
 from .lib.tracker import tracker
 
-class doubeclickoperator(bpy.types.Operator):
-    bl_idname = "acon3d.double_click"
-    bl_label = "double click"
+class TestOperator(bpy.types.Operator):
+    bl_idname = "acon3d.test"
+    bl_label = "test"
+
 
     def execute(self, context):
-        print("execute")
+        print("\nTestOperator()")
+        print("bpy.data.scenes")
 
         for s in bpy.data.scenes:
             print(s)
 
-        context.scene.ACON_prop.last_scene = context.scene.name
-        print(f"저장할 때 : {context.scene.ACON_prop.last_scene}")
+        print("\n")
+
+        sceneName = bpy.data.scenes.new("scene_name")
+        prop = sceneName.ACON_prop
+        prop.last_scene = context.scene.name
 
         bpy.ops.wm.save_mainfile("INVOKE_DEFAULT")
 
@@ -151,9 +156,6 @@ class Acon3dScenesPanel(bpy.types.Panel):
         layout = self.layout
 
         row = layout.row(align=True)
-        row.operator("acon3d.double_click")
-
-        row = layout.row(align=True)
         row.prop(context.window_manager.ACON_prop, "scene", text="")
         row.operator("acon3d.create_scene", text="", icon="ADD")
         row.operator("acon3d.delete_scene", text="", icon="REMOVE")
@@ -163,7 +165,7 @@ classes = (
     CreateSceneOperator,
     DeleteSceneOperator,
     Acon3dScenesPanel,
-    doubeclickoperator,
+    TestOperator,
 )
 
 

@@ -225,6 +225,11 @@ class Acon3dBloomPanel(bpy.types.Panel):
         col.prop(props, "bloom_intensity")
         col.prop(props, "bloom_clamp")
 
+        layout2 = self.layout
+        layout2.active = scene.last_scene
+        col2 = layout2.column()
+        col2.prop(props, "qqq")
+
 
 classes = (
     CloneMaterialOperator,
