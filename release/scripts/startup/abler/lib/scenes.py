@@ -53,12 +53,8 @@ def change_bloom(self, context: Context) -> None:
         tracker.bloom_off()
 
 
-def change_name(self, context: Context) -> None:
-    prop = context.scene.ACON_prop
-    context.scene.name = prop.last_scene
-
-    if context.scene.name == "Scene":
-        print("Scene이면 출력")
+def get_scene_number(self, context: Context) -> None:
+    pass
 
 
 def genSceneName(name: str, i: int = 1) -> str:

@@ -40,6 +40,27 @@ def init_setting(dummy):
     prefs_view.show_tooltips_python = False
     prefs_paths.use_load_ui = False
 
+    print("\ninit_setting")
+    print(f"filepath : {bpy.data.filepath}")
+
+    if bpy.data.filepath is (None or ""):
+        print("에이블러 열고, userpref 불러옴\n")
+
+    else:
+        num = bpy.context.scene.ACON_prop.scene_number
+        print(f"저장된 scene_number: {num}")
+
+        s_list = []
+        for s in bpy.data.scenes:
+            s_list.append(s.name)
+
+        print(f"저장된 scene.name: {s_list[num]}")
+        print("이제 씬 업데이트를 해야함")
+
+        bpy.data.window_managers["WinMan"].ACON_prop.scene = s_list[num]
+        print(f"최종 로드 이름: {bpy.context.scene.name}")
+
+
 
 @persistent
 def load_handler(dummy):
@@ -80,6 +101,10 @@ def save_pre_handler(dummy):
     materials_handler.toggleToonEdge(None, override)
     materials_handler.toggleToonFace(None, override)
 
+    print("save_pre_handler()")
+    print(f"scene_number = {bpy.context.scene.ACON_prop.scene_number}")
+    bpy.context.scene.ACON_prop.scene_number = 0
+
 
 @persistent
 def save_post_handler(dummy):
@@ -87,9 +112,8 @@ def save_post_handler(dummy):
     materials_handler.toggleToonFace(None, None)
 
     print("save_post_handler()")
-
-    bpy.context.scene.collection["last_scene"] = "3"
-    print(bpy.context.scene.collection["last_scene"])
+    print(f"scene_number = {bpy.context.scene.ACON_prop.scene_number}")
+    bpy.context.scene.ACON_prop.scene_number = 2
 
     for scene in bpy.data.scenes:
         scene.view_settings.view_transform = "Standard"

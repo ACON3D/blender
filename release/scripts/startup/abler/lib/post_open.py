@@ -33,12 +33,9 @@ def change_and_reset_value() -> None:
 def update_scene() -> None:
     # 파일 맨 처음 열었을때 scene패널명을 현재 씬과 맞춰주기 위한 함수
     bpy.data.window_managers["WinMan"].ACON_prop.scene = bpy.context.scene.name
-
     print("update_scene()")
-    print(f"scene.name : {bpy.context.scene.name}")
+    print(bpy.context.scene.ACON_prop.scene_number)
 
-    # prop = bpy.data.scenes.get("scene_name").ACON_prop
-    # print(f"prop.last_scene : {prop.last_scene}")
 
 def update_layers():
     # 파일 오픈시 Layer패널 업데이트
