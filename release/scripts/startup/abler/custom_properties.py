@@ -35,10 +35,16 @@ class AconWindowManagerProperty(bpy.types.PropertyGroup):
         del bpy.types.WindowManager.ACON_prop
 
     scene: bpy.props.EnumProperty(
-        name="Scene",
+        # name="Scene",
         description="Change scene",
         items=scenes.add_scene_items,
         update=scenes.loadScene,
+    )
+
+    scene_number: bpy.props.IntProperty(
+        name="Scene Number",
+        default=2,
+        update=scenes.set_scene_number,
     )
 
 
@@ -392,11 +398,11 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         update=scenes.change_bloom,
     )
 
-    scene_number: bpy.props.IntProperty(
-        name="Scene Number",
-        default=0,
-        update=scenes.set_scene_number,
-    )
+    # scene_number: bpy.props.IntProperty(
+    #     name="Scene Number",
+    #     default=2,
+    #     update=scenes.set_scene_number,
+    # )
 
 
 class AconMaterialProperty(bpy.types.PropertyGroup):

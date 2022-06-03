@@ -273,9 +273,14 @@ class Acon3dImportPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
 
+        # 테스트용 오퍼레이터
         row = layout.row()
         row.operator("acon3d.test")
+
+        row = layout.row(align=True)
         row.prop(context.window_manager.ACON_prop, "scene", text="")
+        row.operator("acon3d.create_scene", text="", icon="ADD")
+        row.operator("acon3d.delete_scene", text="", icon="REMOVE")
 
         row = layout.row()
         row.scale_y = 1.0

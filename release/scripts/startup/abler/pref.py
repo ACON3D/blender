@@ -80,26 +80,35 @@ def save_pre_handler(dummy):
     materials_handler.toggleToonEdge(None, override)
     materials_handler.toggleToonFace(None, override)
 
-    print("\nsave_pre_handler()")
+
+    print("\n")
+    print("-> pref.py")
+    print("-> save_pre_handler()")
 
     filepath = bpy.data.filepath
 
     if filepath is (None or ""):
-        print("빈 파일. 저장하기\n")
+        print("빈 파일. 저장하기")
+        print("\n")
 
     else:
-        name = bpy.context.scene.name
-        print(f"저장할 scene name: {name}")
+        name = bpy.data.window_managers["WinMan"].ACON_prop.scene
+        print(f"저장할 씬 이름: {name}")
 
         scene_list = [s.name for s in bpy.data.scenes]
+        print(f"파일 씬 리스트: {scene_list}")
+
         num = scene_list.index(name)
-        print(f"저장할 scene no.: {num}")
+        print(f"저장할 씬 번호: {num}")
 
-        print("property 업데이트 하기")
-        bpy.context.scene.ACON_prop.scene_number = num
-        print(f"ACON_prop.scene_number: {bpy.context.scene.ACON_prop.scene_number}")
+        print("\n")
+        print("-> 씬 번호 업데이트 하기")
 
-        print("저장 마무리\n")
+        bpy.context.window_manager.ACON_prop.scene_number = num
+        print(f"ACON_prop.scene_number: {bpy.context.window_manager.ACON_prop.scene_number}")
+
+        print("-> 저장 마무리")
+        print("\n")
 
     return
 

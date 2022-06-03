@@ -62,15 +62,20 @@ def genSceneName(name: str, i: int = 1) -> str:
 
 
 def set_scene_number(self, context: Context) -> None:
+    # print("-> scenes.py")
+    print("-> set_scene_number()")
+    # print("-> 프린트 테스트")
+    return
     name = bpy.context.scene.name
     scene_list = [s.name for s in bpy.data.scenes]
     num = scene_list.index(name)
 
+
     prop = context.scene.ACON_prop
     prop.scene_number = num
-    print("\nset_scene_number 실행하고 마무리\n")
+    # print("\nset_scene_number 실행하고 마무리\n")
 
-    
+
 
 
 
