@@ -33,8 +33,27 @@ def change_and_reset_value() -> None:
 def update_scene() -> None:
     # 파일 맨 처음 열었을때 scene패널명을 현재 씬과 맞춰주기 위한 함수
     bpy.data.window_managers["WinMan"].ACON_prop.scene = bpy.context.scene.name
-    print("update_scene()")
-    print(bpy.context.scene.ACON_prop.scene_number)
+
+    print("\nupdate_scene()")
+
+    filepath = bpy.data.filepath
+
+    if filepath is (None or ""):
+        print("빈 파일. userpref 불러오기\n")
+
+    else:
+        num = bpy.context.scene.ACON_prop.scene_number
+        print(f"저장된 scene no.: {num}")
+
+        scene_list = [s.name for s in bpy.data.scenes]
+        print(f"저장된 scene name: {scene_list[num]}")
+
+        print("씬 업데이트 가능?")
+        bpy.data.window_managers["WinMan"].ACON_prop.scene = scene_list[num]
+        print(f"최종 로딩되는 scene name1: {bpy.context.scene.name}")
+        print(f"최종 로딩되는 scene name2: {bpy.data.window_managers['WinMan'].ACON_prop.scene}")
+        print("\n")
+
 
 
 def update_layers():

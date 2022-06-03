@@ -53,16 +53,26 @@ def change_bloom(self, context: Context) -> None:
         tracker.bloom_off()
 
 
-def get_scene_number(self, context: Context) -> None:
-    pass
-
-
 def genSceneName(name: str, i: int = 1) -> str:
     combinedName: str = name + str(i)
 
     found = any(scene.name == combinedName for scene in bpy.data.scenes)
 
     return genSceneName(name, i + 1) if found else combinedName
+
+
+def set_scene_number(self, context: Context) -> None:
+    name = bpy.context.scene.name
+    scene_list = [s.name for s in bpy.data.scenes]
+    num = scene_list.index(name)
+
+    prop = context.scene.ACON_prop
+    prop.scene_number = num
+    print("\nset_scene_number 실행하고 마무리\n")
+
+    
+
+
 
 
 def refresh_look_at_me() -> None:

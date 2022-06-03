@@ -43,18 +43,18 @@ class TestOperator(bpy.types.Operator):
     def execute(self, context):
         print("\nTestOperator()")
 
-        name = context.scene.name
-        print(f"저장할 scene.name: {name}")
-
-        scene_list = []
-        for s in bpy.data.scenes:
-            scene_list.append(s.name)
-        num = scene_list.index(name)
-        print(f"저장할 scene_number: {num}")
-
-        prop = context.scene.ACON_prop
-        prop.scene_number = num
-        print(f"prop.scene_number: {prop.scene_number}")
+        # name = context.scene.name
+        # print(f"저장할 scene.name: {name}")
+        #
+        # scene_list = []
+        # for s in bpy.data.scenes:
+        #     scene_list.append(s.name)
+        # num = scene_list.index(name)
+        # print(f"저장할 scene_number: {num}")
+        #
+        # prop = context.scene.ACON_prop
+        # prop.scene_number = num
+        # print(f"prop.scene_number: {prop.scene_number}")
 
         bpy.ops.wm.save_mainfile("INVOKE_DEFAULT")
 

@@ -393,9 +393,9 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     scene_number: bpy.props.IntProperty(
-        name="",
+        name="Scene Number",
         default=0,
-        update=scenes.get_scene_number,
+        update=scenes.set_scene_number,
     )
 
 
