@@ -259,6 +259,21 @@ class SaveAsOperator(bpy.types.Operator, ExportHelper):
         return {"FINISHED"}
 
 
+class TestOperator(bpy.types.Operator):
+    bl_idname = "acon3d.test"
+    bl_label = "test"
+
+    def execute(self, context):
+        print()
+        print("===================================================")
+        print("-> TestOperator()")
+
+
+        bpy.ops.wm.save_mainfile("INVOKE_DEFAULT")
+
+        return {"FINISHED"}
+
+
 class Acon3dImportPanel(bpy.types.Panel):
     bl_idname = "ACON3D_PT_import"
     bl_label = "General"
@@ -326,6 +341,7 @@ classes = (
     FlyOperator,
     SaveOperator,
     SaveAsOperator,
+    TestOperator,
 )
 
 

@@ -41,11 +41,26 @@ class AconWindowManagerProperty(bpy.types.PropertyGroup):
         update=scenes.loadScene,
     )
 
+    def get_num(self):
+        # return self.get("scene_number", self.default)
+        print(f"{self.get('scene_number')}")
+        scene_list = [s.name for s in bpy.data.scenes]
+        name = bpy.data.window_managers["WinMan"].ACON_prop.scene
+        num = scene_list.index(name)
+        print(num)
+        return num
+
+    def set_num(self, value):
+        self["scene_number"] = value
+
     scene_number: bpy.props.IntProperty(
         name="Scene Number",
-        default=2,
-        update=scenes.set_scene_number,
+        # default=2,
+        get=get_num,
+        set=set_num,
     )
+
+
 
 
 class CollectionLayerExcludeProperties(bpy.types.PropertyGroup):
