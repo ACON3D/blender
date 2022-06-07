@@ -9,7 +9,6 @@ from .lib import cameras, shadow, render, scenes, post_open
 from .lib.materials import materials_setup, materials_handler
 from .lib.tracker import tracker
 
-path = "C:/Users/habi/Desktop/Scene.blend"
 
 def init_setting(dummy):
     prefs = bpy.context.preferences
@@ -19,6 +18,8 @@ def init_setting(dummy):
 
     # TODO: Blend -> File Open과 바로 File Open을 할 때 sys.argv의 차이가 있음
     #       이 부분 조작 가능한지 테스트 하는 과정
+    print()
+    print("*" * 50)
     print(sys.argv)
 
     if len(sys.argv) == 1:
@@ -26,9 +27,6 @@ def init_setting(dummy):
 
     if len(sys.argv) > 1:
         print("파일도 같이 열었음")
-        sys.argv = [sys.argv[0]]
-        print(f"업데이트 된 argv: {sys.argv}")
-        return
 
     if "--background" not in sys.argv and "-b" not in sys.argv:
         try:
@@ -104,30 +102,19 @@ def save_pre_handler(dummy):
 
     else:
         scene_list = [s.name for s in bpy.data.scenes]
-        print(f" 저장된 씬 전체: {scene_list}")
+        print(f" 저장된 씬 목록: {scene_list}")
 
         name = bpy.data.window_managers["WinMan"].ACON_prop.scene
         num = scene_list.index(name)
-        print(f" 저장할 씬 이름: {name}")
-        print(f" 저장할 씬 번호: {num}")
+        print(f" 저장할 씬 (이름, 번호): {name, num}")
 
         print()
         print(" -> ACON_prop.scene_number 업데이트 하기")
         print(" -> scene_number에 접근해서 custom_properties로 넘어감")
         bpy.context.window_manager.ACON_prop.scene_number = num
-        bpy.context.window_manager.ACON_prop.scene_number = 3
-
-        # bpy.context.scene = bpy.data.scenes[2]
-        bpy.data.window_managers["WinMan"].ACON_prop.scene_number = 2
 
         print(" -> 업데이트 된 번호 확인")
         print(f" scene_number: {bpy.context.window_manager.ACON_prop.scene_number}")
-        print("*" * 50)
-
-        # print(" -> Try")
-        # bpy.data.window_managers["WinMan"].ACON_prop.scene = "Scene"
-        # print(f" ACON_prop.scene: {bpy.data.window_managers['WinMan'].ACON_prop.scene}")
-
         print("-> 저장 마무리")
         print("*" * 50)
         print()
@@ -139,18 +126,6 @@ def save_pre_handler(dummy):
 def save_post_handler(dummy):
     materials_handler.toggleToonEdge(None, None)
     materials_handler.toggleToonFace(None, None)
-
-    # print("x" * 50)
-    # print(" -> pref.save_post_handler")
-    # print(" -> Try")
-    # bpy.data.window_managers["WinMan"].ACON_prop.scene = "b"
-    # print(f" ACON_prop.scene: {bpy.data.window_managers['WinMan'].ACON_prop.scene}")
-    # bpy.context.window_manager.ACON_prop.scene_number = 888
-    # print(f" scene_number: {bpy.context.window_manager.ACON_prop.scene_number}")
-    # print("종료")
-    # print("x" * 50)
-
-
 
     for scene in bpy.data.scenes:
         scene.view_settings.view_transform = "Standard"

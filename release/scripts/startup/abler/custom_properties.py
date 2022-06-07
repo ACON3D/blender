@@ -34,13 +34,7 @@ class AconWindowManagerProperty(bpy.types.PropertyGroup):
     def unregister(cls):
         del bpy.types.WindowManager.ACON_prop
 
-    scene: bpy.props.EnumProperty(
-        # name="Scene",
-        description="Change scene",
-        items=scenes.add_scene_items,
-        update=scenes.loadScene,
-    )
-
+    # TODO: get, set 활용해서 property 업데이트
     def get_num(self):
         print("*" * 50)
         print(" -> custom_properties.get_num")
@@ -52,7 +46,7 @@ class AconWindowManagerProperty(bpy.types.PropertyGroup):
         scene_list = [s.name for s in bpy.data.scenes]
         name = bpy.data.window_managers["WinMan"].ACON_prop.scene
         num = scene_list.index(name)
-        print(f" return num: {num}")
+        print(f"   return num: {num}")
         print("*" * 50)
 
         return self.get("scene_number", num)
@@ -60,27 +54,25 @@ class AconWindowManagerProperty(bpy.types.PropertyGroup):
     def set_num(self, value):
         print("*" * 50)
         print(" -> custom_properties.set_num")
-
         print(" -> 저장할 데이터 확인")
-        print(f" self: {self}")
+        print(f"  self: {self}")
         print(f" value: {value}")
-        # bpy.context.scene.name = "c"
 
-        # print(f" self.scene_number: {self.scene_number}")
-        # self.scene_number = value
-        # print(f" self['scene_number']: {self['scene_number']}")
-        # self["scene_number"] = value
-        # print(f" self['scene_number']: {self['scene_number']}")
+        self["scene_number"] = value
+
+    scene: bpy.props.EnumProperty(
+        # name="Scene",
+        description="Change scene",
+        items=scenes.add_scene_items,
+        update=scenes.loadScene,
+    )
 
     scene_number: bpy.props.IntProperty(
         name="Scene Number",
         # default=2,
         get=get_num,
         set=set_num,
-        update=scenes.loadScene,
     )
-
-
 
 
 class CollectionLayerExcludeProperties(bpy.types.PropertyGroup):

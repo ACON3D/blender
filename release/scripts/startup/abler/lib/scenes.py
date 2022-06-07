@@ -61,31 +61,6 @@ def genSceneName(name: str, i: int = 1) -> str:
     return genSceneName(name, i + 1) if found else combinedName
 
 
-def set_scene_number(self, context: Context) -> None:
-    print()
-    print("-> scenes.set_scene_number()")
-    print(f"scene_number: {context.window_manager.ACON_prop.scene_number}")
-
-    print()
-    print("-> 씬 업데이트 확인")
-    scene_list = [s.name for s in bpy.data.scenes]
-    num = context.window_manager.ACON_prop.scene_number
-    bpy.data.window_managers["WinMan"].ACON_prop.scene = scene_list[num]
-    print(f"ACON_prop.scene: {bpy.data.window_managers['WinMan'].ACON_prop.scene}")
-
-
-
-    return
-    name = bpy.context.scene.name
-
-    num = scene_list.index(name)
-
-
-
-
-
-
-
 def refresh_look_at_me() -> None:
 
     context = bpy.context

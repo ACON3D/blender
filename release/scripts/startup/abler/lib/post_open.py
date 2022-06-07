@@ -34,12 +34,11 @@ def update_scene() -> None:
     # 파일 맨 처음 열었을때 scene패널명을 현재 씬과 맞춰주기 위한 함수
     # bpy.data.window_managers["WinMan"].ACON_prop.scene = bpy.context.scene.name
 
-    print()
     print("*" * 50)
     print(" -> post_open.update_scene")
     print(" -> 최초 씬 이름 확인")
     print(f" context.scene.name: {bpy.context.scene.name}")
-    print(f" ACON_prop.scene   : {bpy.data.window_managers['WinMan'].ACON_prop.scene}")
+    print(f"    ACON_prop.scene: {bpy.data.window_managers['WinMan'].ACON_prop.scene}")
 
     filepath = bpy.data.filepath
 
@@ -49,24 +48,21 @@ def update_scene() -> None:
         print()
 
     else:
-        print()
-
         scene_list = [s.name for s in bpy.data.scenes]
-        print(f" 저장된 씬 전체: {scene_list}")
+        print(f"       저장된 씬 목록: {scene_list}")
 
         print()
         print(" -> scene_number 값 불러오기")
         print(" -> scene_number에 접근해서 custom_properties로 넘어감")
         num = bpy.context.window_manager.ACON_prop.scene_number
-        print(f" 저장된 씬 번호: {num}")
-        print(f" 저장된 씬 이름: {scene_list[num]}")
+        print(f" 저장된 씬 (번호, 이름): {num, scene_list[num]}")
 
         print()
         print(" -> ACON_prop.scene 업데이트")
-        # bpy.data.window_managers["WinMan"].ACON_prop.scene = scene_list[num]
+        bpy.data.window_managers["WinMan"].ACON_prop.scene = scene_list[num]
 
         print(f" context.scene.name: {bpy.context.scene.name}")
-        print(f" ACON_prop.scene   : {bpy.data.window_managers['WinMan'].ACON_prop.scene}")
+        print(f"    ACON_prop.scene: {bpy.data.window_managers['WinMan'].ACON_prop.scene}")
         print("*" * 50)
 
 

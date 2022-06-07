@@ -264,7 +264,6 @@ class TestOperator(bpy.types.Operator):
     bl_label = "test"
 
     def execute(self, context):
-        print("*" * 50)
         print("-> TestOperator()")
         print("*" * 50)
 
