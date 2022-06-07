@@ -35,31 +35,39 @@ def update_scene() -> None:
     # bpy.data.window_managers["WinMan"].ACON_prop.scene = bpy.context.scene.name
 
     print()
-    print("-> post_open.update_scene()")
-
-    print("최초 씬 이름 확인")
-    print(f"bpy.context.scene.name: {bpy.context.scene.name}")
-    print(f"bpy.data.window_managers['WinMan'].ACON_prop.scene: {bpy.data.window_managers['WinMan'].ACON_prop.scene}")
+    print("*" * 50)
+    print(" -> post_open.update_scene")
+    print(" -> 최초 씬 이름 확인")
+    print(f" context.scene.name: {bpy.context.scene.name}")
+    print(f" ACON_prop.scene   : {bpy.data.window_managers['WinMan'].ACON_prop.scene}")
 
     filepath = bpy.data.filepath
 
     if filepath is (None or ""):
-        print("빈 파일. userpref 불러오기\n")
+        print(" 빈 파일. userpref 불러오기")
+        print("*" * 50)
+        print()
 
     else:
-        scene_list = [s.name for s in bpy.data.scenes]
-        print(f"파일 씬 리스트: {scene_list}")
+        print()
 
-        num = bpy.context.window_manager.ACON_prop.scene_number
-        print(f"저장된 씬 번호: {num}")
-        print(f"저장된 씬 이름: {scene_list[num]}")
+        scene_list = [s.name for s in bpy.data.scenes]
+        print(f" 저장된 씬 전체: {scene_list}")
 
         print()
-        print("-> 씬 업데이트")
-        bpy.data.window_managers["WinMan"].ACON_prop.scene = scene_list[num]
+        print(" -> scene_number 값 불러오기")
+        print(" -> scene_number에 접근해서 custom_properties로 넘어감")
+        num = bpy.context.window_manager.ACON_prop.scene_number
+        print(f" 저장된 씬 번호: {num}")
+        print(f" 저장된 씬 이름: {scene_list[num]}")
 
-        print("-> 업데이트 된 씬 확인")
-        print(f"bpy.context.scene.name: {bpy.context.scene.name}")
+        print()
+        print(" -> ACON_prop.scene 업데이트")
+        # bpy.data.window_managers["WinMan"].ACON_prop.scene = scene_list[num]
+
+        print(f" context.scene.name: {bpy.context.scene.name}")
+        print(f" ACON_prop.scene   : {bpy.data.window_managers['WinMan'].ACON_prop.scene}")
+        print("*" * 50)
 
 
 def update_layers():

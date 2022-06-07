@@ -264,10 +264,9 @@ class TestOperator(bpy.types.Operator):
     bl_label = "test"
 
     def execute(self, context):
-        print()
-        print("===================================================")
+        print("*" * 50)
         print("-> TestOperator()")
-
+        print("*" * 50)
 
         bpy.ops.wm.save_mainfile("INVOKE_DEFAULT")
 
