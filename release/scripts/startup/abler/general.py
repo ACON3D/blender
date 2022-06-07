@@ -261,7 +261,7 @@ class SaveAsOperator(bpy.types.Operator, ExportHelper):
 
 class TestOperator(bpy.types.Operator):
     bl_idname = "acon3d.test"
-    bl_label = "test"
+    bl_label = "Test Save"
 
     def execute(self, context):
         print("-> TestOperator()")
