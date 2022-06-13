@@ -255,7 +255,8 @@ def _init_properties_from_data(base_props, base_value):
             try:
                 setattr(base_props, attr, value)
             except AttributeError:
-                print(f"Warning: property '{attr}' not found in item '{base_props.__class__.__name__}'")
+                pass
+                # print(f"Warning: property '{attr}' not found in item '{base_props.__class__.__name__}'")
             except Exception as ex:
                 print(f"Warning: {ex!r}")
 
