@@ -542,6 +542,7 @@ class Acon3dRenderQuickOperator(Acon3dRenderFileOperator):
         return super().execute(context)
 
     def prepare_queue(self, context):
+        render.renderWithWorldBackgroundColor()
         # File name duplicate check
 
         base_filepath = os.path.join(self.dirname, self.basename)
@@ -601,6 +602,15 @@ class Acon3dRenderPanel(bpy.types.Panel):
             row = layout.row()
             row.operator("acon3d.render_all", text="Render All Scenes")
             row.operator("acon3d.render_snip", text="Snip Render")
+
+        layout = self.layout
+        layout.use_property_split = False
+        row = layout.row(align=True)
+        row.prop(
+            scene.ACON_prop,
+            "render_with_background_color",
+            text="render with background color",
+        )
 
 
 classes = (

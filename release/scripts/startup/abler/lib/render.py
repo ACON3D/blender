@@ -18,6 +18,115 @@
 
 
 import bpy
+import os
+
+node_world_surface_name = "ACON_nodeGroup_world_surface"
+background_color_array = (0.701102, 0.701102, 0.701102, 1.0)
+
+
+def renderWithBackgroundColor(tree, node_right):
+    # 컴포지터로 배경색 적용
+    # 이 방법은 Quick Render에선 적용X -> setWorldSurfaceNodeGroup()에서 따로 적용
+    scene = bpy.context.scene
+
+    if scene.ACON_prop.render_with_background_color:
+        scene.render.film_transparent = True
+        scene.world.use_nodes = True
+
+        node_alphaOver_back = tree.nodes.new("CompositorNodeAlphaOver")
+        node_alphaOver_back.inputs[1].default_value = background_color_array
+        node_alphaOver_front = node_right.links[0].from_node
+        tree.links.new(node_alphaOver_front.outputs[0], node_alphaOver_back.inputs[2])
+        tree.links.new(node_alphaOver_back.outputs[0], node_right)
+
+        # 월드셰이더 node_texture_diffuse.image = None으로 바꿔줘야
+        # 컴포지터에서 배경이미지를 적용할 수 있음
+        nodes = scene.world.node_tree.nodes
+        node_world_surface = nodes.get(node_world_surface_name)
+        if not node_world_surface:
+            pass
+        else:
+            node_texture_diffuse = nodes.get("ACON_node_env_diffuse")
+            node_texture_diffuse.image = None
+
+
+def appendNodeGroup(path_abler, node_group_name):
+    # preset/abler 폴더 내 startup.blend 파일에서 노드 그룹 append
+    file_name = "startup.blend"
+    bpy.ops.wm.append(
+        filepath=file_name,
+        directory=path_abler + "/" + file_name + "\\NodeTree\\",
+        filename=node_group_name,
+        autoselect=False,
+        active_collection=False,
+        instance_object_data=False,
+        use_recursive=False,
+    )
+
+
+def setWorldSurfaceNodeGroup(tree, node_group_name):
+    # world surface 노드 그룹을 현재 설정에 맞게 세팅
+    nodes = tree.nodes
+
+    # node_world_surface로 설정
+    node_world_surface = nodes.new("ShaderNodeGroup")
+    node_world_surface.node_tree = bpy.data.node_groups[node_group_name]
+    node_world_surface.name = node_group_name
+    tree.links.new(node_world_surface.outputs[0], nodes["World Output"].inputs[0])
+
+    # node_texture_diffuse,normal 설정
+    # 호이님 월드 셰이더에서 쓴 노드 이름 그대로 사용 -> 월드 셰이더와 충돌 방지
+    node_texture_diffuse = nodes.new("ShaderNodeTexEnvironment")
+    node_texture_diffuse.name = "ACON_node_env_diffuse"
+    tree.links.new(node_texture_diffuse.outputs[0], node_world_surface.inputs[3])
+    node_texture_normal = nodes.new("ShaderNodeTexEnvironment")
+    node_texture_normal.name = "ACON_node_env_normal"
+    tree.links.new(node_texture_normal.outputs[0], node_world_surface.inputs[4])
+
+
+def renderWithWorldBackgroundColor():
+    # Quick Render에선 월드셰이더로 배경색 적용
+    scene = bpy.context.scene
+
+    if scene.ACON_prop.render_with_background_color:
+        scene.render.film_transparent = False
+        scene.world.use_nodes = True
+
+        tree = scene.world.node_tree
+        nodes = tree.nodes
+        path_abler = bpy.utils.preset_paths("abler")[0]
+        node_world_surface = nodes.get(node_world_surface_name)
+        if not node_world_surface:
+            appendNodeGroup(path_abler, node_world_surface_name)
+            setWorldSurfaceNodeGroup(tree, node_world_surface_name)
+            node_world_surface = nodes.get(node_world_surface_name)
+
+        node_texture_diffuse = nodes.get("ACON_node_env_diffuse")
+        if not node_texture_diffuse.image:
+            # TODO: 월드 셰이더와 충돌하지 않도록 추후 개선
+            # node_texture_diffuse.image == "background_color"
+            try:
+                image_diffuse = None
+                path_background_color = os.path.join(path_abler, "background_color")
+                image_diffuse_path = os.path.join(
+                    path_background_color, "background_color.png"
+                )
+
+                for item in bpy.data.images:
+                    if item.filepath == image_diffuse_path:
+                        image_diffuse = item
+
+                if not image_diffuse:
+                    image_diffuse = bpy.data.images.load(image_diffuse_path)
+
+                node_texture_diffuse.image = image_diffuse
+
+            except Exception as e:
+                scene.render.film_transparent = True
+                raise e
+
+    else:
+        scene.render.film_transparent = True
 
 
 def setup_snip_compositor(
@@ -59,6 +168,7 @@ def setup_background_images_compositor(node_left=None, node_right=None, scene=No
     toggle_texture = context.scene.ACON_prop.toggle_texture
 
     if not cam.show_background_images or not toggle_texture:
+        renderWithBackgroundColor(tree, node_right)
         return
 
     for background_image in reversed(background_images):
@@ -139,6 +249,8 @@ def setup_background_images_compositor(node_left=None, node_right=None, scene=No
             tree.links.new(node_left, node_alphaOver.inputs[1])
             node_right = node_alphaOver.inputs[1]
 
+    renderWithBackgroundColor(tree, node_right)
+
 
 def clear_compositor(scene=None):
 
@@ -147,7 +259,6 @@ def clear_compositor(scene=None):
     if not scene:
         scene = context.scene
 
-    scene.render.film_transparent = True
     scene.use_nodes = True
     tree = scene.node_tree
     nodes = tree.nodes
