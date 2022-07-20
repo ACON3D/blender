@@ -94,6 +94,8 @@ if NOT "%1" == "" (
 		set BUILD_UPDATE_ARGS="--no-libraries"
 	) else if "%1" == "acp" (
 		SET BUILD_ACP=1
+	) else if "%1" == "skp" (
+	    SET BUILD_SKP=1
 	) else if "%1" == "ninja" (
 		SET BUILD_WITH_NINJA=1
 	) else if "%1" == "sccache" (
