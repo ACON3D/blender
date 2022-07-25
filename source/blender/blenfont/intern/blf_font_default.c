@@ -50,10 +50,10 @@ static int blf_load_font_default(const char *filename, const bool unique)
 
 int BLF_load_default(const bool unique)
 {
-  return blf_load_font_default("droidsans.ttf", unique);
+  return blf_load_font_default("D2Coding.ttf", unique);
 }
 
 int BLF_load_mono_default(const bool unique)
 {
-  return blf_load_font_default("bmonofont-i18n.ttf", unique);
+  return blf_load_font_default("D2Coding.ttf", unique);
 }
