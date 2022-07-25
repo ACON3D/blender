@@ -30,61 +30,151 @@ bl_info = {
     "category": "ACON3D",
 }
 
-
 import bpy
 from .lib import layers
 from .lib.tracker import tracker
+from typing import Any, Dict, List, Union, Tuple, Optional
+
+
+def select_active_and_descendants():
+    bpy.ops.object.select_grouped()
+    bpy.context.view_layer.objects.active.select_set(True)
+
+
+# items should be a global variable due to a bug in EnumProperty
+items: List[Tuple[str, str, str]] = []
+
+
+def add_group_list_from_collection(self, context: bpy.context) -> List[Tuple[str, str, str]]:
+    items.clear()
+    draft_selection = manager.selection_undo_stack.copy()
+    obj = context.active_object
+    for item in draft_selection:
+        icon_str = "OUTLINER_OB_MESH" if item.type == "MESH" else "OUTLINER_OB_EMPTY"
+        items.append((item.name, item.name, "", icon_str, 0))
+    icon_str = "OUTLINER_OB_MESH" if obj.type == "MESH" else "OUTLINER_OB_EMPTY"
+    items.append((obj.name, obj.name, "", icon_str, 0))
+    if obj.parent:
+        while obj.parent.parent:
+            icon_str = "OUTLINER_OB_MESH" if obj.parent.type == "MESH" else "OUTLINER_OB_EMPTY"
+            items.append((obj.parent.name, obj.parent.name, "", icon_str, 0))
+            obj = obj.parent
+
+    return items
+
+
+class GroupNavigationManager:
+    _selection_undo_stack = []
+    _user_event_disabled = False
+
+    def __repr__(self):
+        return repr(self._selection_undo_stack)
+
+    def go_top(self):
+        obj = bpy.context.active_object
+        if obj.parent:
+            while obj.parent.parent:
+                self._selection_undo_stack.append(obj)
+                obj = obj.parent
+        with self._programmatic_selection_scope():
+            bpy.context.view_layer.objects.active = obj
+            select_active_and_descendants()
+
+    def go_up(self):
+        obj = bpy.context.active_object
+        if parent := obj.parent:
+            if parent.parent is not None:
+                with self._programmatic_selection_scope():
+                    self._selection_undo_stack.append(obj)
+                    bpy.context.view_layer.objects.active = parent
+                    select_active_and_descendants()
+
+    def go_down(self):
+        if len(self._selection_undo_stack) > 0:
+            with self._programmatic_selection_scope():
+                last_selected = self._selection_undo_stack.pop()
+                bpy.context.view_layer.objects.active = last_selected
+                select_active_and_descendants()
+
+    def go_bottom(self):
+        if len(self._selection_undo_stack) > 0:
+            with self._programmatic_selection_scope():
+                while len(self._selection_undo_stack) > 0:
+                    last_selected = self._selection_undo_stack.pop()
+                bpy.context.view_layer.objects.active = last_selected
+                select_active_and_descendants()
+
+    def _programmatic_selection_scope(self):
+        return ProgrammaticSelectionScope(self)
+
+    @property
+    def selection_undo_stack(self):
+        return self._selection_undo_stack
+
+
+class ProgrammaticSelectionScope:
+    """
+    msgbus 콜백이 다음 이벤트 루프에 실행되는 문제가 있어서,
+    실행을 지연시키기 위하여 실행 블록을 잡아주는 클래스
+    """
+
+    def __init__(self, manager: GroupNavigationManager):
+        self._manager = manager
+
+    def __enter__(self):
+        self._manager._user_event_disabled = True
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        def delayed():
+            self._manager._user_event_disabled = False
+
+        bpy.app.timers.register(delayed, first_interval=0.01)
+
+
+manager = GroupNavigationManager()
 
 
 class GroupNavigateTopOperator(bpy.types.Operator):
-    """Select Top Group"""
-
     bl_idname = "acon3d.group_navigate_top"
-    bl_label = "Group Navigate Top"
+    bl_label = "Go Top"
     bl_translation_context = "*"
 
     def execute(self, context):
         tracker.group_navigate_top()
-        layers.selectByGroup("TOP")
+        manager.go_top()
         return {"FINISHED"}
 
 
 class GroupNavigateUpOperator(bpy.types.Operator):
-    """Select Upper Group"""
-
     bl_idname = "acon3d.group_navigate_up"
-    bl_label = "Group Navigate Up"
+    bl_label = "Go Up"
     bl_translation_context = "*"
 
     def execute(self, context):
         tracker.group_navigate_up()
-        layers.selectByGroup("UP")
+        manager.go_up()
         return {"FINISHED"}
 
 
 class GroupNavigateDownOperator(bpy.types.Operator):
-    """Select Lower Group"""
-
     bl_idname = "acon3d.group_navigate_down"
-    bl_label = "Group Navigate Down"
+    bl_label = "Go Down"
     bl_translation_context = "*"
 
     def execute(self, context):
         tracker.group_navigate_down()
-        layers.selectByGroup("DOWN")
+        manager.go_down()
         return {"FINISHED"}
 
 
 class GroupNavigateBottomOperator(bpy.types.Operator):
-    """Select Bottom Group"""
-
     bl_idname = "acon3d.group_navigate_bottom"
-    bl_label = "Group Navigate Bottom"
+    bl_label = "Go Bottom"
     bl_translation_context = "*"
 
     def execute(self, context):
         tracker.group_navigate_bottom()
-        layers.selectByGroup("BOTTOM")
+        manager.go_bottom()
         return {"FINISHED"}
 
 
@@ -110,7 +200,6 @@ class Acon3dStateUpdateOperator(bpy.types.Operator):
                 continue
 
             for att in ["location", "rotation_euler", "scale"]:
-
                 vector = getattr(obj, att)
                 setattr(prop.state_end, att, vector)
 
@@ -225,20 +314,18 @@ class Acon3dGroupNavigaionPanel(bpy.types.Panel):
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
+        layout = self.layout
+
         if context.selected_objects:
             obj = context.object
             prop = obj.ACON_prop
-            layout = self.layout
-
             row = layout.row(align=True)
-            row.enabled = "Groups" in context.collection.children.keys()
             row.prop(prop, "group_list", text="")
             row.operator("acon3d.group_navigate_top", text="", icon="TRIA_UP_BAR")
             row.operator("acon3d.group_navigate_up", text="", icon="TRIA_UP")
             row.operator("acon3d.group_navigate_down", text="", icon="TRIA_DOWN")
             row.operator("acon3d.group_navigate_bottom", text="", icon="TRIA_DOWN_BAR")
         else:
-            layout = self.layout
             row = layout.row(align=True)
             row.label(text="No selected object")
 
